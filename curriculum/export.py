@@ -3,11 +3,15 @@ Utilities for create raw PDF files.
 """
 import os
 from django.conf import settings
-from django.template import Context
+# from django.template import Context
 from django.template.loader import get_template
 from django.utils.six import StringIO
+from io import BytesIO
 import xhtml2pdf.pisa as pisa
 
+
+class Context(dict):
+    pass
 
 def single_page(resume):
     """
@@ -90,9 +94,9 @@ def export_pdf(resume, resume_func, resume_func_kwargs=None):
     """
     resume_func_kwargs = resume_func_kwargs or {}
     html = resume_func(resume, **resume_func_kwargs)
-    result = StringIO()
+    result = BytesIO()
     pdf = pisa.pisaDocument(
-        StringIO(html.encode("UTF-8")),
+        BytesIO(html.encode("UTF-8")),
         dest=result,
         encoding='UTF-8',
         link_callback=fetch_resources)
